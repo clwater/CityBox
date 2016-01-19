@@ -1,21 +1,26 @@
 package com.uit.uit2013.model;
 
+import com.uit.uit2013.utils.PreferenceTool;
+
 /**
  * Created by soul on 2016/1/16.
  */
 public class User {
 
     String name;
-    String type;
     String id;
     String pw;
 
-    public String getType() {
-        return type;
+    public static User getDefault() {
+        User user = new User();
+        user.setId(PreferenceTool.getid());
+        user.setName(PreferenceTool.getusername());
+        user.setPw_forP(PreferenceTool.getpw());
+        return  user;
     }
 
-    public void setType(String type) {
-        this.type = type;
+    private void setPw_forP(String getpw) {
+        this.pw = getpw;
     }
 
     public String getName() {
@@ -42,5 +47,19 @@ public class User {
         this.pw = pw;
     }
 
+    public static String des(String str)
+    {
+        char[] pBuf = str.toCharArray();
+        int iLen = pBuf.length;
+
+        int i;
+        for(i=0;i<iLen;i++)
+        {
+            pBuf[i]^=iLen-i;
+        }
+
+        return String.valueOf(pBuf);
+
+    }
 
 }

@@ -8,6 +8,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.uit.uit2013.R;
+import com.uit.uit2013.utils.PreferenceTool;
 import com.umeng.analytics.MobclickAgent;
 
 
@@ -18,18 +19,16 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        //是否登陆
-     if(true){
+     PreferenceTool pt = new PreferenceTool(this);
+
+     boolean login_statu = pt.getloginstatu();        //判断是否登陆
+
+     if(!login_statu){
             Log.d("=-=" , "=-=");
                 startActivity(new Intent( this , LoginActivity.class));
         }
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
-    }
 
 
     public void onResume() {
