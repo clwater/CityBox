@@ -11,22 +11,22 @@ import com.uit.uit2013.model.User;
  * Created by soul on 2016/1/17.
  */
 
-//ÓÃ»§¹¤¾ßÀà  ÓÃÓÚ´¢´æµÇÂ½ĞÅÏ¢
+//ç”¨æˆ·å·¥å…·ç±»  ç”¨äºå‚¨å­˜ç™»é™†ä¿¡æ¯
 public class PreferenceTool {
-    public final static String USER_PW = "USER_RANDOM_UUID";//ÆäÊµÊÇÃÜÂë
+    public final static String USER_PW = "USER_RANDOM_UUID";//å…¶å®æ˜¯å¯†ç 
     public final static String USER_ID = "USER_ID";
     public final static String USER_NAME = "USER_NAME";
     public final static String IS_LOGIN = "IS_LOGIN";
 
-    private static SharedPreferences  USERI_G = null;//¶ÁÈ¡ĞÅÏ¢
-    private static SharedPreferences.Editor USERI_W = null; //±£´æĞÅÏ¢
+    private static SharedPreferences  USERI_G = null;//è¯»å–ä¿¡æ¯
+    private static SharedPreferences.Editor USERI_W = null; //ä¿å­˜ä¿¡æ¯
 
     public PreferenceTool(Context context){
         USERI_G = context.getSharedPreferences("login" , context.MODE_PRIVATE);
         USERI_W = context.getSharedPreferences("login" , context.MODE_PRIVATE).edit();
     }
 
-   public static void  setPreferenceTool(String id , String pw ,String username , boolean loginstatu){
+    public static void  setPreferenceTool(String id , String pw ,String username , boolean loginstatu){
         USERI_W.putString("id" , id);
         USERI_W.putString("pw" , pw);
         USERI_W.putString("username" , username);

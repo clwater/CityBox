@@ -3,5 +3,10 @@
   <component name="Encoding">
     <file url="file://$PROJECT_DIR$/app/src/main/java/com/uit/uit2013/ui/activity/LoginActivity.java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/app/src/main/java/com/uit/uit2013/ui/activity/MainActivity.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/app/src/main/java/com/uit/uit2013/ui/fragment/FragmentLife.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/app/src/main/java/com/uit/uit2013/ui/fragment/FragmentSchedule.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/app/src/main/java/com/uit/uit2013/ui/fragment/FragmentSeeting.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/app/src/main/java/com/uit/uit2013/ui/fragment/FragmentStudy.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/app/src/main/java/com/uit/uit2013/utils/PreferenceTool.java" charset="UTF-8" />
   </component>
 </project>
