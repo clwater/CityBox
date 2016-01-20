@@ -12,8 +12,8 @@ import com.uit.uit2013.R;
 /**
  * Created by soul on 2016/1/19.
  */
-public class FragmentSchedule extends Fragment {
-    private TextView tv;
+public class FragmentSchedule extends Fragment implements View.OnClickListener {
+    private TextView tv,updatatv;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -25,6 +25,16 @@ public class FragmentSchedule extends Fragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         tv = (TextView) getView().findViewById(R.id.titleTv);
+        updatatv = (TextView)getView().findViewById(R.id.updatatv);
+        updatatv.setOnClickListener(this);
         tv.setText("课表");
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()){
+            case R.id.updatatv:
+                break;
+        }
     }
 }

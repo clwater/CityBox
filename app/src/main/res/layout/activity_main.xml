@@ -5,6 +5,8 @@
     android:background="#ffff8241"
     android:orientation="vertical" >
 
+
+
     <!-- 上边主页面 -->
 
     <fragment
