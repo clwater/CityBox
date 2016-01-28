@@ -70,9 +70,6 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
     }
     private void setFragmentIndicator() {
         rb = new TextView[4];
-//        for (int i = 0 ; i < 4 ; i++){
-//            rb[i] = new TextView
-//        }
 
         rb[0] = (TextView) findViewById(R.id.rbOne);
         rb[1] = (TextView) findViewById(R.id.rbTwo);

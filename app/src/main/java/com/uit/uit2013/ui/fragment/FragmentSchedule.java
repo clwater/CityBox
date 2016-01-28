@@ -9,7 +9,9 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.Display;
+import android.view.GestureDetector;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
@@ -19,6 +21,7 @@ import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -30,13 +33,16 @@ import com.uit.uit2013.R;
 import com.uit.uit2013.model.KeBiao;
 import com.uit.uit2013.model.Schedule;
 import com.uit.uit2013.model.User;
+import com.uit.uit2013.utils.BetweenData;
 import com.uit.uit2013.utils.analysis.LoginAnalysis;
 import com.uit.uit2013.utils.analysis.ScheduleAnalysis;
 import com.uit.uit2013.utils.db.ScheduleDateCtrl;
 
+import org.apache.http.TokenIterator;
 import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONException;
 
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Vector;
@@ -57,24 +63,46 @@ public class FragmentSchedule extends Fragment implements View.OnClickListener {
     private TextView[][] day_top;
     private LinearLayout top;
     private ArrayAdapter<String> choose_adapter;
-    private TextView top_dq;
+    private TextView top_dq , return_this_day;
     public static ProgressDialog pr;
     public RequestQueue mQueue;
     private String request ;
-    private int choose_week = 14 ;
+    private int choose_week = 0 , now_week = 0;
     Context context;
     Vector<KeBiao>  schedule;
+
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_schedule, container, false);
         activity = getActivity();
         context = activity.getApplicationContext();
+
         genScreen();
         oncreate();
+        getData();
         getSchedule();
 
+
         return view;
+    }
+
+    private void getData(){
+        Calendar c = Calendar.getInstance();//可以对每个时间域单独修改
+
+        int getData_year = c.get(Calendar.YEAR);
+        int getData_mouth = c.get(Calendar.MONTH);
+        int getData_day = c.get(Calendar.DATE);
+        now_week = BetweenData.getWeekNumber(getData_year , getData_mouth + 1 ,getData_day);
+        Log.d("-=" , "now_week:" + now_week);
+        choose_week = now_week ;
+        changeDayWidth(BetweenData.getDayOfWeekNumber(getData_year , getData_mouth + 1 ,getData_day) - 1 );
+        int sweek = now_week + 1 ;
+        String top_dq_s = "第" + sweek +"周" ;
+        top_dq.setText(top_dq_s);
+        choose.setSelection(choose_week,true);
+
     }
 
     private void getSchedule() {
@@ -156,6 +184,11 @@ public class FragmentSchedule extends Fragment implements View.OnClickListener {
             case R.id.day6:
                 changeDayWidth(6);
                 break;
+            case R.id.return_this_day:
+                choose_week = now_week;
+                drawSchedule();
+                choose.setSelection(choose_week,true);
+                break;
         }
     }
 
@@ -165,6 +198,7 @@ public class FragmentSchedule extends Fragment implements View.OnClickListener {
         CountingTask task=new CountingTask();
         task.execute();
     }
+
 
 
 
@@ -182,7 +216,7 @@ public class FragmentSchedule extends Fragment implements View.OnClickListener {
                                 pd = sa.getstatu(response);
                             } catch (JSONException e) {}
                             if (pd){
-                               Log.d("=-=" , "pd: " + pd);
+                              // Log.d("=-=" , "pd: " + pd);
                                 try {
                                     ScheduleAnalysis.AnalysisSchedule(response ,context);
                                     pr.dismiss();
@@ -241,7 +275,7 @@ public class FragmentSchedule extends Fragment implements View.OnClickListener {
 
         //对应活动中的各个组件
         choose = (Spinner) view.findViewById(R.id.choose);
-        s_choose  = new String[20];
+        s_choose  = new String[30];
 
         day = new LinearLayout[7];
         day[0] = (LinearLayout) view.findViewById(R.id.day0);
@@ -340,7 +374,7 @@ public class FragmentSchedule extends Fragment implements View.OnClickListener {
             day[i].setOnClickListener((View.OnClickListener) this);
         }
 
-        for( i = 0 ; i < 20 ; i++){
+        for( i = 0 ; i < 30 ; i++){
             s_choose[i] = "第" + ( i+1) + "周";
         }
 
@@ -351,6 +385,8 @@ public class FragmentSchedule extends Fragment implements View.OnClickListener {
         choose.setVisibility(View.VISIBLE);
 
         top_dq = ( TextView ) view.findViewById(R.id.top_dq);
+        return_this_day = (TextView) view.findViewById(R.id.return_this_day);
+        return_this_day.setOnClickListener(this);
     }
 
         /*
@@ -365,33 +401,9 @@ public class FragmentSchedule extends Fragment implements View.OnClickListener {
         public void onNothingSelected(AdapterView<?> arg0) {
         }
     }
-    private void setKeBiao(int _week) {
 
-//        for (int i = 0; i < 7; i++) {
-//            for (int j = 0; j < 6; j++) {
-//                int length = kebiaoadapter[i][j].getNum();
-//                lesson_is = false;
-//                for (int k = 0; k < length; k++) {
-//                    int[] check_week = new int[20];
-//                    check_week = kebiaoadapter[i][j].getWeeks(k);
-//                    if (lesson_is == false) {
-//                        day_t[i][j].setText("");
-//                        day_t[i][j].setBackgroundColor(Color.parseColor("#FFFFFF"));
-//                    }
-//                    int check_lessong_lesson = check_week.length;
-//                    for (int l = 0; l < check_lessong_lesson; l++) {
-//
-//                        if (check_week[l] == _week) {
-//                            day_t[i][j].setText("" + kebiaoadapter[i][j].getClass_name(k) + "\n@" + kebiaoadapter[i][j].getClassrom(k));
-//                            day_t[i][j].setTextColor(Color.parseColor("#000000"));
-//                            lesson_is = true;            //某一节课不同周数课程同 防止空的课程把已存在的覆盖
-//                            changecolor(kebiaoadapter[i][j].getClass_name(k), i, j);
-//                        }
-//                    }
-//                }
-//            }
-//        }
-    }
+
+
 
 
 
@@ -417,4 +429,8 @@ public class FragmentSchedule extends Fragment implements View.OnClickListener {
             }
         }
     }
+
+
+
+
 }

@@ -1,4 +1,4 @@
-package com.uit.uit2013;
+package uit2013.uit.com.citybox;
 
 import android.app.Application;
 import android.test.ApplicationTestCase;
