@@ -33,6 +33,7 @@ import java.util.Map;
 
 /**
  * Created by soul on 2016/1/16.
+ * 登录页面
  */
 public class LoginActivity  extends Activity implements View.OnClickListener {
     public static String TAG = "LoginActivity" ;
@@ -50,6 +51,7 @@ public class LoginActivity  extends Activity implements View.OnClickListener {
         oncreate();
     }
 
+    //初始化
     private void oncreate() {
         userid = (EditText) findViewById(R.id.userid);
         userpw = (EditText) findViewById(R.id.passwd);

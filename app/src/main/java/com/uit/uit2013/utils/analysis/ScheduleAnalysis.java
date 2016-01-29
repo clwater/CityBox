@@ -15,6 +15,7 @@ import org.json.JSONTokener;
 
 /**
  * Created by soul on 2016/1/20.
+ * 课表信息解析工具类
  */
 public class ScheduleAnalysis {
 
@@ -123,7 +124,7 @@ public class ScheduleAnalysis {
         return c;
     }
 
-    public static String[] inscolor(){
+    public static String[] inscolor(){//课表颜色信息
         String[] s = { "#67A9BF" , "#8CCBB8" ,"#D5EAE1" ,"#A5D6D3" ,"#47BBE0" ,"#67A9BF" ,"#9DBDE3" ,"#CBE8FA" ,"#7DC8DB" ,"#43A6DD" };
         return s;
     }

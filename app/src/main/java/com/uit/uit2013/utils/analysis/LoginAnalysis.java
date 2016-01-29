@@ -10,6 +10,7 @@ import org.json.JSONTokener;
 
 /**
  * Created by soul on 2016/1/17.
+ * 登录信息解析工具类
  */
 public class LoginAnalysis {
     public boolean getstatu(String result) throws JSONException {

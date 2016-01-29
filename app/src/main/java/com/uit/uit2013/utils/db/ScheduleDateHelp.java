@@ -6,6 +6,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 /**
  * Created by soul on 2016/1/22.
+ * 课表数据库操作类
  */
 public class ScheduleDateHelp extends SQLiteOpenHelper{
     public static final String CREATE_SCHEDULE = "create table schedule ("
@@ -16,6 +17,7 @@ public class ScheduleDateHelp extends SQLiteOpenHelper{
             + "INDEX_W text ,"
             + "INDEX_T text "
             +")";
+    //建表信息
     private Context mContext;
 
 

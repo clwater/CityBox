@@ -79,10 +79,10 @@ public class FragmentSchedule extends Fragment implements View.OnClickListener {
         activity = getActivity();
         context = activity.getApplicationContext();
 
-        genScreen();
-        oncreate();
-        getData();
-        getSchedule();
+        genScreen();        //获取屏幕大小
+        oncreate();         //实例化组建
+        getData();          //获取日期信息
+        getSchedule();      //获取课表
 
 
         return view;
@@ -90,14 +90,13 @@ public class FragmentSchedule extends Fragment implements View.OnClickListener {
 
     private void getData(){
         Calendar c = Calendar.getInstance();//可以对每个时间域单独修改
-
         int getData_year = c.get(Calendar.YEAR);
         int getData_mouth = c.get(Calendar.MONTH);
         int getData_day = c.get(Calendar.DATE);
-        now_week = BetweenData.getWeekNumber(getData_year , getData_mouth + 1 ,getData_day);
+        now_week = BetweenData.getWeekNumber(getData_year , getData_mouth + 1 ,getData_day);    //获取周数
         Log.d("-=" , "now_week:" + now_week);
         choose_week = now_week ;
-        changeDayWidth(BetweenData.getDayOfWeekNumber(getData_year , getData_mouth + 1 ,getData_day) - 1 );
+        changeDayWidth(BetweenData.getDayOfWeekNumber(getData_year , getData_mouth + 1 ,getData_day) - 1 ); //获取周几
         int sweek = now_week + 1 ;
         String top_dq_s = "第" + sweek +"周" ;
         top_dq.setText(top_dq_s);
@@ -107,7 +106,7 @@ public class FragmentSchedule extends Fragment implements View.OnClickListener {
 
     private void getSchedule() {
         schedule = Schedule.getins(context);
-        drawSchedule();
+        drawSchedule();//绘制课表
 
     }
 
@@ -120,7 +119,7 @@ public class FragmentSchedule extends Fragment implements View.OnClickListener {
                     KeBiao kb = schedule.get(k);
                     if ( (kb.getINDEX_T() == j ) && (kb.getINDEX_W() == i ) ){
                         Vector length = new Vector();
-                        length = kb.getWeek();
+                        length = kb.getWeek();      //判断周数和位置是否正确
                         for (int m = 0 ; m <length.size() ; m++){
                             if ( Integer.valueOf( length.get(m).toString() )== choose_week){
                                 String classtext = "";
@@ -140,6 +139,7 @@ public class FragmentSchedule extends Fragment implements View.OnClickListener {
     }
 
     private void cleardrawSchedule() {
+        //清空课表
         for (int i = 0 ; i < 7 ; i++){
             for (int j = 0 ; j < 6 ; j++){
                 day_t[i][j].setText("");
@@ -192,7 +192,7 @@ public class FragmentSchedule extends Fragment implements View.OnClickListener {
         }
     }
 
-    private void updaataSchedule() {
+    private void updaataSchedule() {//更新课表
         pr = ProgressDialog.show(activity, null, "更新数据中......");
         mQueue = Volley.newRequestQueue(activity);
         CountingTask task=new CountingTask();
@@ -210,13 +210,11 @@ public class FragmentSchedule extends Fragment implements View.OnClickListener {
                     new Response.Listener<String>() {
                         public void onResponse(String response) {
                             request = response;
-                            //Log.d("=-=" , request);
                             ScheduleAnalysis sa = new ScheduleAnalysis();
                             try {
                                 pd = sa.getstatu(response);
                             } catch (JSONException e) {}
                             if (pd){
-                              // Log.d("=-=" , "pd: " + pd);
                                 try {
                                     ScheduleAnalysis.AnalysisSchedule(response ,context);
                                     pr.dismiss();
@@ -408,6 +406,7 @@ public class FragmentSchedule extends Fragment implements View.OnClickListener {
 
 
     private void changeDayWidth(int _day) {
+        //组建宽度变化
         for(int  i = 0 ; i < 7 ; i++){
             if( i !=  _day) {
                 day[i].setLayoutParams(new LinearLayout.LayoutParams(screenWidth / 8, LinearLayout.LayoutParams.MATCH_PARENT ));
