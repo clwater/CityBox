@@ -10,7 +10,7 @@
     <com.twotoasters.jazzylistview.JazzyListView
         android:layout_width="match_parent"
         android:layout_height="fill_parent"
-        android:id="@+id/life_res_listview"
+        android:id="@+id/life_dangkou_listview"
         android:background="#eaeaef">
 
     </com.twotoasters.jazzylistview.JazzyListView>

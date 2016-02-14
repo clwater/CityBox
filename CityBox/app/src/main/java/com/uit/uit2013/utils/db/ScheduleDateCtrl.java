@@ -19,7 +19,7 @@ public class ScheduleDateCtrl {
     public  static  SQLiteDatabase db;
 
     public static void createSQL(Context context){//创建数据库
-        dbHelper = new ScheduleDateHelp(context, "schedule.db", null, 1);
+        dbHelper = new ScheduleDateHelp(context, "citybox.db", null, 1);
         dbHelper.getWritableDatabase();
         db = dbHelper.getWritableDatabase();
     }
@@ -35,6 +35,10 @@ public class ScheduleDateCtrl {
         values.put("INDEX_T", INDEX_T);
         db.insert("schedule", null, values);
 
+    }
+    public  static  void delete(Context context){
+        String sql=" DROP TABLE IF EXISTS schedule";
+        db.execSQL(sql);
     }
     //查询课表信息
     public static Vector<KeBiao> QuerySchedule(Context context){

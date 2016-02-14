@@ -12,19 +12,17 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 
 
-public class ResDateHelp extends SQLiteOpenHelper{
-    public static final String CREATE_RES = "create table res ("
-            + "id text , "
-            + "name text ,"
-            + "loaction text ,"
-            + "floor text ,"
-            + "phone text"
+public class DKDateHelp extends SQLiteOpenHelper{
+    public static final String CREATE_DangKou = "create table dangkou ("
+            + "name text , "
+            + "price text ,"
+            + "dangkouid text "
             +")";
     //建表信息
     private Context mContext;
 
 
-    public ResDateHelp(Context context, String name, SQLiteDatabase.CursorFactory factory, int version) {
+    public DKDateHelp(Context context, String name, SQLiteDatabase.CursorFactory factory, int version) {
         super(context, name, factory, version);
 
     }
@@ -32,13 +30,13 @@ public class ResDateHelp extends SQLiteOpenHelper{
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-       db.execSQL("DROP TABLE IF EXISTS res");
-        db.execSQL(CREATE_RES);
+       db.execSQL("DROP TABLE IF EXISTS dangkou");
+        db.execSQL(CREATE_DangKou);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase sqLiteDatabase, int i, int i1) {
-        sqLiteDatabase.execSQL("drop table if exists res");
+        sqLiteDatabase.execSQL("drop table if exists dangkou");
         onCreate(sqLiteDatabase);
     }
 }

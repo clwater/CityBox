@@ -3,6 +3,7 @@ package com.uit.uit2013.ui.activity;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -81,6 +82,9 @@ private class CountingTask extends AsyncTask<Void, Void, Void> {
                             pd = la.getstatu(response);
                             if (pd){
                                 loginsuccess();
+                            }else {
+                                pr.dismiss();
+                                Toast.makeText(LoginActivity.this , "账号或密码错误" , Toast.LENGTH_SHORT).show();
                             }
                         } catch (JSONException e) {
                         }
@@ -105,8 +109,10 @@ private class CountingTask extends AsyncTask<Void, Void, Void> {
 }
     private void loginsuccess() throws JSONException {
         Toast.makeText(this,"登陆成功" , Toast.LENGTH_SHORT).show();
+
         savelogin();
         pr.dismiss();
+        startActivity(new Intent( this , MainActivity.class));
     }
 
     private void savelogin() throws JSONException {

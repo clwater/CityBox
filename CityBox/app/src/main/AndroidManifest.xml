@@ -29,6 +29,7 @@
             android:name=".ui.activity.LoginActivity"
             android:label="login" />
         <activity android:name=".ui.activity.LifeRestauranActivity"/>
+        <activity android:name=".ui.activity.LifeDangKouActivity"/>
 
         <meta-data android:value="5698d64167e58ef640000085" android:name="UMENG_APPKEY"></meta-data>
         <meta-data android:value="fir" android:name="UMENG_CHANNEL"/>

@@ -4,6 +4,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 
 import com.uit.uit2013.model.KeBiao;
 import com.uit.uit2013.model.Restaurant;
@@ -18,13 +19,18 @@ public class ResDateCtrl {
     public static ResDateHelp dbHelper;
     public  static  SQLiteDatabase db;
 
-    public static void createSQL(Context context){//创建数据库
-        dbHelper = new ResDateHelp(context, "res.db", null, 1);
+    public static void createSQL(Context context){
+        //创建数据库
+        dbHelper = new ResDateHelp(context, "citybox.db", null, 1);
         dbHelper.getWritableDatabase();
         db = dbHelper.getWritableDatabase();
+        //Log.d("yanzheng" , "success2");
+        //String a = "create table res ( id text , name text , loaction text , floor text , phone text ) ";
+       // db.execSQL(a);
+
     }
     //插入数据到数据库
-    public static void UpdateRes(Context context , String id , String name , String location , String floor , int phone  ){
+    public static void UpdateRes(Context context , String id , String name , String location , String floor , String phone  ){
         createSQL(context);
         ContentValues values = new ContentValues();
         values.put("id", id);
@@ -33,6 +39,7 @@ public class ResDateCtrl {
         values.put("floor", floor);
         values.put("phone", phone);
         db.insert("res", null, values);
+
 
     }
     
@@ -66,4 +73,10 @@ public class ResDateCtrl {
         return res;
     }
 
+
+    public  static  void delete(Context context){
+        createSQL(context);
+        String sql="DELETE FROM res";
+        db.execSQL(sql);
+    }
 }

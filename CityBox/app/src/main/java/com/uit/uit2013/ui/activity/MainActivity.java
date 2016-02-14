@@ -2,6 +2,8 @@ package com.uit.uit2013.ui.activity;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -21,6 +23,8 @@ import android.widget.Toast;
 
 import com.uit.uit2013.R;
 import com.uit.uit2013.utils.PreferenceTool;
+import com.uit.uit2013.utils.db.ResDateHelp;
+import com.uit.uit2013.utils.db.ScheduleDateHelp;
 import com.umeng.analytics.MobclickAgent;
 
 
@@ -35,6 +39,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
     final int LEFT = 1;
     private GestureDetector gestureDetector;
     private int CHANGE = 0 ;
+    private boolean app_statu = false;
     //设置滑动判断相关
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,17 +47,62 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_main);
 
-     PreferenceTool pt = new PreferenceTool(this);
+        app_statu = markapp();//判断是否第一次打开应用
 
-     boolean login_statu = pt.getloginstatu();        //判断是否登陆
-     if(!login_statu){
+        PreferenceTool pt = new PreferenceTool(this);
+
+          boolean login_statu = pt.getloginstatu();        //判断是否登陆
+           if(!login_statu){
+                this.finish();
                 startActivity(new Intent( this , LoginActivity.class));
-        }
+         }
 
        // gestureDetector = new GestureDetector(MainActivity.this,onGestureListener);//滑动监听
+
+
+        if ( app_statu) {
+            createtable();//用于创建相关数据库 =-=   在其他地方创建不好用  不好用 不好用.....
+        }
+
         setcreate();
     }
 
+    private boolean markapp() {
+        boolean appopenstatu = false;
+
+
+        SharedPreferences appinfo = this.getSharedPreferences("appinfo", MODE_PRIVATE);
+        appopenstatu = appinfo.getBoolean("app" , false);
+
+        if ( appopenstatu == false ) {
+            SharedPreferences.Editor editor = appinfo.edit();
+            editor.putBoolean("app", true);
+            editor.commit();
+            return true;
+        }else {
+            return false;
+        }
+
+    }
+
+    private void createtable() {
+        ResDateHelp dbHelper;
+        SQLiteDatabase db;
+        dbHelper = new ResDateHelp(this , "citybox.db", null, 1);
+        dbHelper.getWritableDatabase();
+        db = dbHelper.getWritableDatabase();
+        String res = "create table res ( id text , name text , loaction text , floor text , phone text ) ";
+        db.execSQL(res);
+
+        String dangkou = "create table dangkou ("
+                + "name text , "
+                + "price text ,"
+                + "dangkouid text "
+                +")";
+        db.execSQL(dangkou);
+
+
+    }
 
 
     private void setcreate() {//初始化相关 fragment

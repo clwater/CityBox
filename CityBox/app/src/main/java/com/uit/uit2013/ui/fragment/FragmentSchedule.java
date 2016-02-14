@@ -211,6 +211,7 @@ public class FragmentSchedule extends Fragment implements View.OnClickListener {
                                 pd = sa.getstatu(response);
                                 if (pd){
                                     ScheduleAnalysis.AnalysisSchedule(response ,context);
+                                    getSchedule();
                                     pr.dismiss();
                                 }else{
                                     pr.dismiss();
