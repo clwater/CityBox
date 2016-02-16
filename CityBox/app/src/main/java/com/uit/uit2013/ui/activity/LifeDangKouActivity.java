@@ -26,7 +26,7 @@ import com.uit.uit2013.model.Restaurant;
 import com.uit.uit2013.model.SimpleOrder;
 import com.uit.uit2013.utils.db.DKDateCtrl;
 import com.uit.uit2013.utils.db.ResDateCtrl;
-import com.uit.uit2013.utils.network.DangKouNewWork;
+import com.uit.uit2013.utils.network.DangKouNetWork;
 
 
 import org.json.JSONException;
@@ -42,7 +42,7 @@ import java.util.Vector;
  */
 public class LifeDangKouActivity  extends Activity implements View.OnClickListener {
 
-    private  String dangkouid_s ,dangkouname;
+    private  String dangkouid_s ,dangkouname , dangkoulocation;
     private int dangkouid;
     private TextView life_title , back , life_updata , life_history  , settlement;
     public static TextView allprice;
@@ -51,7 +51,9 @@ public class LifeDangKouActivity  extends Activity implements View.OnClickListen
     private Vector<DangKou> dangkou = new Vector<DangKou>();
     public static  Vector<SimpleOrder> order = new Vector<SimpleOrder>();
     public static double all = 0 ;
+    public static int select = 0 ;
     private JazzyListView life_dangkou_listview;
+    public static Activity lifedangkouactivity;
 
 
 
@@ -62,15 +64,32 @@ public class LifeDangKouActivity  extends Activity implements View.OnClickListen
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.life_dangkou);
 
+        select = 0;
+
+        lifedangkouactivity = this;
         Intent intent = getIntent();
         dangkouid_s  = intent.getStringExtra("dangkouid");
         dangkouid = Integer.valueOf(dangkouid_s);
         dangkouid++;
         dangkouid_s = String.valueOf(dangkouid);
         dangkouname = intent.getStringExtra("dangkouname");
+        dangkoulocation = intent.getStringExtra("dangkoulocation");
         createtitle();
         createlist();
 
+        clearorder();
+
+    }
+
+    private void clearorder() {
+        all = 0;
+        order.clear();
+
+    }
+
+    protected void onDestory(){
+        super.onDestroy();
+        all = 0 ;
     }
 
     private void createlist() {
@@ -132,7 +151,20 @@ public class LifeDangKouActivity  extends Activity implements View.OnClickListen
                 updata();
                 break;
             case R.id.settlement:
+                enternext();
                 break;
+        }
+    }
+
+    private void enternext() {
+        if (all > 0 ) {
+            Intent settlement_ok = new Intent();
+            settlement_ok.putExtra("dangkouname", "" + dangkouname);
+            settlement_ok.putExtra("dangkoulocation" , ""+dangkoulocation);
+            settlement_ok.setClass(this, SetTlementActivity.class);
+            startActivity(settlement_ok);
+        }else {
+            Toast.makeText(this , "你还没有选择任何菜品" , Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -146,7 +178,7 @@ public class LifeDangKouActivity  extends Activity implements View.OnClickListen
         protected Void doInBackground(Void... params) {
 
             try {
-                DangKouNewWork.getDangKou(getApplicationContext(), dangkouid_s);
+                DangKouNetWork.getDangKou(getApplicationContext(), dangkouid_s);
             } catch (JSONException e) {}
             return null;
         }
@@ -174,7 +206,7 @@ public class LifeDangKouActivity  extends Activity implements View.OnClickListen
             all += ( pr * nu );
         }
 
-        allprice.setText(""+all);
+        allprice.setText(""+all+"  元");
     }
 
 

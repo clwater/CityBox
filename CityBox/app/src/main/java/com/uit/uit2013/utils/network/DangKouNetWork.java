@@ -26,7 +26,7 @@ import java.util.List;
 /**
  * Created by yszsyf on 16/2/13.
  */
-public class DangKouNewWork {
+public class DangKouNetWork {
     public  static String getDangKou(Context context , String id ) throws JSONException {
         String result = null;
 
@@ -48,12 +48,7 @@ public class DangKouNewWork {
             HttpResponse httpResp = httpClient.execute(httpget);
             if (httpResp.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
                 result = EntityUtils.toString(httpResp.getEntity(), "UTF-8");
-                // ResDateCtrl.delete(context);
-
-
                 DangKouAnalysis.AnalysisRes(result,id, context);
-
-
             }
 
         } catch (IOException e) {}

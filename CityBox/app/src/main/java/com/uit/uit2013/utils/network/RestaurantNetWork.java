@@ -29,7 +29,7 @@ import java.util.Vector;
  * Created by yszsyf on 16/2/1.
  * 获取食堂食堂数据 不知道为什么这里用volley不好用 =-=  只能使用android自带的
  */
-public class RestaurantNetEork {
+public class RestaurantNetWork {
 
     public  static String getRestaurant(Context context){
         String result = null;

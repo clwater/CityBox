@@ -2,29 +2,22 @@ package com.uit.uit2013.ui.activity;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.Intent;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.twotoasters.jazzylistview.JazzyListView;
 import com.twotoasters.jazzylistview.effects.HelixEffect;
 import com.uit.uit2013.R;
 import com.uit.uit2013.model.Restaurant;
-import com.uit.uit2013.utils.analysis.RestaurantAnalysis;
 import com.uit.uit2013.utils.db.ResDateCtrl;
-import com.uit.uit2013.utils.network.RestaurantNetEork;
+import com.uit.uit2013.utils.network.RestaurantNetWork;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -117,7 +110,7 @@ public class LifeRestauranActivity extends Activity implements View.OnClickListe
     }
     private class CountingTask extends AsyncTask<Void, Void, Void> {
         protected Void doInBackground(Void... params) {
-            RestaurantNetEork.getRestaurant(getApplicationContext());
+            RestaurantNetWork.getRestaurant(getApplicationContext());
             return null;
         }
         protected void onProgressUpdate(Void... progress){}
@@ -139,6 +132,7 @@ public class LifeRestauranActivity extends Activity implements View.OnClickListe
         Intent next = new Intent();
         next.putExtra("dangkouid" , ""+danghouid);
         next.putExtra("dangkouname" , "" + res.get(arg2).getName());
+        next.putExtra("dangkoulocation", "" + res.get(arg2).getLocation());
         next.setClass(this,LifeDangKouActivity.class);
         startActivity(next);
 

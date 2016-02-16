@@ -106,7 +106,7 @@ public class OrderingAdapter extends BaseAdapter {
         //绑定数据
 
         dk.name.setText((String) data.get(position).get("name"));
-        dk.price.setText("¥" + (String) data.get(position).get("price"));
+        dk.price.setText((String) data.get(position).get("price"));
         dk.number.setText("0");
         dk.sub.setText("-");
         dk.sub.setTag(position);
@@ -130,6 +130,7 @@ public class OrderingAdapter extends BaseAdapter {
                     vb.get(position).setText("" + shuliang[position]);
                     LifeDangKouActivity.order.get(position).setNumber(shuliang[position]);
                     LifeDangKouActivity.changeorde();
+                    LifeDangKouActivity.select--;
                 }
             }
         });
@@ -140,6 +141,7 @@ public class OrderingAdapter extends BaseAdapter {
                 vb.get(position).setText("" + shuliang[position]);
                 LifeDangKouActivity.order.get(position).setNumber(shuliang[position]);
                 LifeDangKouActivity.changeorde();
+                LifeDangKouActivity.select++;
             }
         });
 

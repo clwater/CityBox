@@ -54,6 +54,7 @@
             android:layout_height="match_parent"
             android:layout_gravity="center"
             android:gravity="center"
+            android:text="0  元"
             android:id="@+id/allprice"
             android:textSize="20sp"
             android:textColor="#fff"/>
@@ -70,7 +71,7 @@
             android:text="去结算"
             android:id="@+id/settlement"
             android:textSize="20sp"
-            android:background="#ffff3000"
+            android:background="@drawable/rounded_button_settlement_finish"
             android:textColor="#fff"/>
 
 
