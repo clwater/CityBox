@@ -23,6 +23,7 @@ import android.widget.Toast;
 
 import com.uit.uit2013.R;
 import com.uit.uit2013.utils.PreferenceTool;
+import com.uit.uit2013.utils.db.OrderDateHelp;
 import com.uit.uit2013.utils.db.ResDateHelp;
 import com.uit.uit2013.utils.db.ScheduleDateHelp;
 import com.umeng.analytics.MobclickAgent;
@@ -87,8 +88,12 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
 
     private void createtable() {
         ResDateHelp dbHelper;
+        OrderDateHelp orderDateHelp;
         SQLiteDatabase db;
         dbHelper = new ResDateHelp(this , "citybox.db", null, 1);
+        orderDateHelp =  new OrderDateHelp(this , "citybox.db", null, 1);
+
+        orderDateHelp.getWritableDatabase();
         dbHelper.getWritableDatabase();
         db = dbHelper.getWritableDatabase();
         String res = "create table res ( id text , name text , loaction text , floor text , phone text ) ";
@@ -100,6 +105,21 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
                 + "dangkouid text "
                 +")";
         db.execSQL(dangkou);
+
+        db = orderDateHelp.getWritableDatabase();
+        String order = "create table my_order ("
+                + "ordertype text ,"
+                + "ordernum text ,"
+                + "ordermealman text ,"
+                + "sendmealman text ,"
+                + "sendmanphone text ,"
+                + "ordermenu text ,"
+                + "orderstart text ,"
+                + "ordersucces text ,"
+                + "orderend text ,"
+                + "orderstatu  text "
+                +")";
+        db.execSQL(order);
 
 
     }

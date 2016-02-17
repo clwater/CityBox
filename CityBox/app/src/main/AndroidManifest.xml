@@ -64,6 +64,7 @@
         <activity android:name=".ui.activity.SetTlementActivity"/>
         <activity android:name=".ui.activity.EnterDataActivity"/>
         <activity android:name=".ui.activity.LifeAcceptActivity"/>
+        <activity android:name=".ui.activity.MyOrderActivity"/>
 
 
 

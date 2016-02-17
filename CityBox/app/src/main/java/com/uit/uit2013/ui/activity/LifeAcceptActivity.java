@@ -2,11 +2,13 @@ package com.uit.uit2013.ui.activity;
 
 import android.app.Activity;
 import android.app.ActivityManager;
+import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -14,6 +16,7 @@ import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.easemob.EMCallBack;
 import com.easemob.chat.CmdMessageBody;
@@ -27,16 +30,27 @@ import com.twotoasters.jazzylistview.effects.GrowEffect;
 import com.twotoasters.jazzylistview.effects.HelixEffect;
 import com.uit.uit2013.R;
 import com.uit.uit2013.model.AllOrder;
+import com.uit.uit2013.model.LocalOrder;
+import com.uit.uit2013.ui.Dialog.OrderAcceptDialog;
+import com.uit.uit2013.utils.PreferenceTool;
+import com.uit.uit2013.utils.analysis.ComplexOrderAnalysis;
 import com.uit.uit2013.utils.analysis.OrderAnalysis;
+import com.uit.uit2013.utils.db.DKDateCtrl;
+import com.uit.uit2013.utils.db.OrderDateCtrl;
 import com.uit.uit2013.utils.db.ResDateCtrl;
+import com.uit.uit2013.utils.network.AppleyOrderNetWork;
+import com.uit.uit2013.utils.network.DangKouNetWork;
+import com.uit.uit2013.utils.network.GetAllCanAcceptOrderNetWork;
 
 import org.json.JSONException;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Vector;
 
 /**
  * Created by yszsyf on 16/2/16.
@@ -45,14 +59,25 @@ public class LifeAcceptActivity extends Activity implements View.OnClickListener
 
     private TextView accept_title , accept_back , accept_updata , accept_history;
     private AllOrder allorder;
+    private Vector<AllOrder> vectior_allorder = new Vector<AllOrder>();
     private JazzyListView accept_listview;
     private  SimpleAdapter adapter;
     private  List<Map<String, Object>> data;
+    public static ProgressDialog pr , apply_pr;
+    private String com_name;
+    private Activity activity;
+    private Vector<String> unanalysicorder = new Vector<String>();
+    private int selectitem = 0;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.life_accept);
+
+
+
+        activity = this;
+        OrderDateCtrl.createSQL(activity);
 
         imcreate();
         createtitle();
@@ -72,7 +97,7 @@ public class LifeAcceptActivity extends Activity implements View.OnClickListener
 //
         data = getData();
         adapter = new SimpleAdapter(this,data,R.layout.item_accept,
-                new String[]{"statu","loaction","allprice" , "address" , "rewark"},
+                new String[]{"statu","loaction","allprice" , "address" , "reward"},
                 new int[]{R.id.item_accept_statu , R.id.item_accept_location,R.id.item_accept_allprice , R.id.item_accept_address , R.id.item_accept_rewark} );
 
 
@@ -82,21 +107,92 @@ public class LifeAcceptActivity extends Activity implements View.OnClickListener
 
     private List<Map<String,Object>> getData() {
         List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
-        for (int i=0 ; i<1 ; i++) {
+        for (int i=0 ; i<0 ; i++) {
             Map<String, Object> map = new HashMap<String, Object>();
             map.put("statu", "等你\n抢单");
             map.put("loaction", "位置:" + i);
             map.put("allprice" , "总价:" + i);
             map.put("address" , "地址:" + i);
-            map.put("rewark" , "打赏" + i);
+            map.put("reward" , "打赏" + i);
             list.add(map);
         }
         return list;
     }
 
-    public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
-                            long arg3) {
+    public void onItemClick(AdapterView<?> arg0, View arg1, final int arg2, long arg3) {
 
+        OrderAcceptDialog dialog = new OrderAcceptDialog(this,vectior_allorder.get(arg2),new OrderAcceptDialog.OnCustomDialogListener() {
+            @Override
+            public void back(String name) {
+                selectitem = arg2;
+                Log.d("accept" , "back:" + name);
+                if (!name.equals("canel") ){
+                    com_name =name;
+                    appelyorder(name);
+                }
+
+            }
+        });
+        dialog.show();
+    }
+
+    private void appelyorder(String ordernum) {
+        apply_pr = ProgressDialog.show(LifeAcceptActivity.this, null, "正在抢单中,请保持网络畅通");
+        CountingTask2 task2=new CountingTask2();
+        task2.execute();
+    }
+    private class CountingTask2 extends AsyncTask<Void, Void, Void> {
+        String resultweb_apply = "";
+        protected Void doInBackground(Void... params) {
+
+
+            try {
+                PreferenceTool pt = new PreferenceTool(activity);
+                resultweb_apply = AppleyOrderNetWork.AppleyOrder(com_name,PreferenceTool.getid());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            Log.d("accept" , "resultweb_apply" + resultweb_apply);
+
+            return null;
+        }
+        protected void onProgressUpdate(Void... progress){}
+        protected void onPostExecute(Void result){
+            if (resultweb_apply.equals("{\"status\":\"take success\"}")){
+                saveorder();
+                apply_pr.dismiss();
+                Toast.makeText(activity , "抢单成功,请到历史记录中查看详细信息." , Toast.LENGTH_SHORT).show();
+
+            }else if (resultweb_apply.equals("{\"status\":\"take failed\"}")){
+                apply_pr.dismiss();
+                Toast.makeText(activity , "抢单失败,你下手慢了,已经被别人抢先了" , Toast.LENGTH_SHORT).show();
+            }else if(resultweb_apply.equals("{\"status\":\"internal error\"}")){
+                apply_pr.dismiss();
+                Toast.makeText(activity , "服务器异常,请稍后重试" , Toast.LENGTH_SHORT).show();
+            }
+
+        }
+    }
+
+
+
+
+    private void saveorder() {
+        PreferenceTool pt = new PreferenceTool(activity);
+        LocalOrder lo = new LocalOrder();
+        lo.setOrdertype(LocalOrder.TYPE_SENG);
+        lo.setOrdernum(vectior_allorder.get(selectitem).getOrdernum());
+        lo.setOrdermealman(vectior_allorder.get(selectitem).getId());
+        lo.setSendmealman(PreferenceTool.getid());
+        lo.setSendmanphone("");
+        lo.setOrderstart("");
+        lo.setOrdersucces("");
+        lo.setOrderend("");
+        lo.setOrderstatu(LocalOrder.STATU_ACCEPT);
+        String newsetOrdermenu = unanalysicorder.get(selectitem).replace('\"' , '@');
+        lo.setOrdermenu(newsetOrdermenu);
+        Log.d("history" , "setOrdermenu:" + lo.getOrdermenu());
+        OrderDateCtrl.UpdateRes(activity , lo);
 
     }
 
@@ -161,25 +257,29 @@ public class LifeAcceptActivity extends Activity implements View.OnClickListener
     };
 
     private void getneworder(String aciton) throws JSONException {
+        unanalysicorder.add(aciton);
         allorder = OrderAnalysis.orderanalysis(aciton);
+
         Log.d("accept" ,"allorder.getPrice(): "+ allorder.getId() );
 
         insertneworder(allorder);
 
+        adapter.notifyDataSetChanged();
+
     }
 
     private void insertneworder(AllOrder allorder) {
-
+        vectior_allorder.add(allorder);
         Map<String, Object> map = new HashMap<String, Object>();
         map.put("statu", "等你\n抢单");
         map.put("loaction", "位置:" + allorder.getOrdermeal().get(0).getSt());
         map.put("allprice" , "总价:" + allorder.getPrice());
         map.put("address" , "地址:" + allorder.getWhere());
-        map.put("rewark" , "打赏" + allorder.getRemark());
+        map.put("reward" , "打赏:" + allorder.getReward());
 
         data.add(map);
 
-        adapter.notifyDataSetChanged();
+
 
     }
 
@@ -229,9 +329,72 @@ public class LifeAcceptActivity extends Activity implements View.OnClickListener
                 this.finish();
                 break;
             case R.id.life_history:
+                Intent history = new Intent();
+                history.putExtra("type" , "" + LocalOrder.TYPE_SENG);
+                history.setClass(this , MyOrderActivity.class);
+                startActivity(history);
                 break;
             case R.id.life_updata:
+                getallneworder();
                 break;
         }
+    }
+
+    private void getallneworder() {
+        pr = ProgressDialog.show(LifeAcceptActivity.this, null, "获取可用订单中");
+        //DKDateCtrl.delete(this , dangkouid_s);
+        CountingTask task=new CountingTask();
+        task.execute();
+    }
+    private class CountingTask extends AsyncTask<Void, Void, Void> {
+        String resultweb = "";
+        protected Void doInBackground(Void... params) {
+
+
+            try {
+                resultweb = GetAllCanAcceptOrderNetWork.getAllCanAcceptOrder();
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            Log.d("accept" , "resultweb" + resultweb);
+
+            return null;
+        }
+        protected void onProgressUpdate(Void... progress){}
+        protected void onPostExecute(Void result){
+            try {
+                getdateforwebsuccess(resultweb);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private void getdateforwebsuccess(String result) throws JSONException {
+
+        if (result.equals("{\"status\":\"null\"}") || result.equals("{\"status\":[null]}")){
+            pr.dismiss();
+            Toast.makeText(LifeAcceptActivity.this , "当前没有可获取的订单." , Toast.LENGTH_SHORT).show();
+        }else if (result.equals("{\"status\":\"internal error\"}")){
+            pr.dismiss();
+            Toast.makeText(LifeAcceptActivity.this , "服务器出错了,请稍后重试." , Toast.LENGTH_SHORT).show();
+        }else{
+            Vector<String> getoldneworder = new Vector<String>();
+            getoldneworder = ComplexOrderAnalysis.ComplexOrder(result);
+            setComplexorder(getoldneworder);
+            pr.dismiss();
+        }
+    }
+
+    private void setComplexorder(Vector<String> getoldneworder) throws JSONException {
+        for (int i = 0 ; i < getoldneworder.size() ; i++){
+            AllOrder setComplexorder_allorder = new AllOrder();
+            unanalysicorder.add(getoldneworder.get(i).toString() );
+            setComplexorder_allorder = OrderAnalysis.orderanalysis(getoldneworder.get(i).toString());
+
+            insertneworder(setComplexorder_allorder);
+        }
+        adapter.notifyDataSetChanged();
+
     }
 }
