@@ -14,6 +14,7 @@ import android.widget.TextView;
 import com.twotoasters.jazzylistview.JazzyListView;
 import com.twotoasters.jazzylistview.effects.FanEffect;
 import com.uit.uit2013.R;
+import com.uit.uit2013.ui.activity.LifeAcceptActivity;
 import com.uit.uit2013.ui.activity.LifeRestauranActivity;
 
 import java.util.ArrayList;
@@ -23,7 +24,7 @@ import java.util.List;
  * Created by soul on 2016/1/19.
  */
 public class FragmentLife extends Fragment implements View.OnClickListener {
-    private TextView tv , life_restaurant , life_songcan ,updatatv;
+    private TextView tv , life_restaurant , life_accept ,updatatv;
     private JazzyListView jazzylistview_life ;
     private View view;
     private Activity activity;
@@ -46,12 +47,12 @@ public class FragmentLife extends Fragment implements View.OnClickListener {
 
     private void create() {
         life_restaurant = (TextView) view.findViewById(R.id.life_restaurant);
-        life_songcan = (TextView) view.findViewById(R.id.life_songcan);
+        life_accept = (TextView) view.findViewById(R.id.life_accept);
         updatatv = (TextView) view.findViewById(R.id.updatatv);
         updatatv.setText("");
 
         life_restaurant.setOnClickListener(this);
-        life_songcan.setOnClickListener(this);
+        life_accept.setOnClickListener(this);
 
     }
     @Override
@@ -60,7 +61,8 @@ public class FragmentLife extends Fragment implements View.OnClickListener {
             case R.id.life_restaurant:
                 startActivity(new Intent(activity , LifeRestauranActivity.class));
                 break;
-            case R.id.life_songcan:
+            case R.id.life_accept:
+                startActivity(new Intent(activity , LifeAcceptActivity.class));
                 break;
         }
 

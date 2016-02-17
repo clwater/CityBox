@@ -34,7 +34,7 @@
             android:layout_width="0dp"
             android:layout_weight="1"
             android:layout_height="match_parent"
-            android:id="@+id/life_songcan"
+            android:id="@+id/life_accept"
             android:drawableTop="@drawable/ic_songcan"
             android:text="送餐"
             android:textSize="20dp"
